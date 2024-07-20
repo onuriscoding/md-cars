@@ -1,19 +1,19 @@
-from scrapy import Spider, Request
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from scrapy.selector import Selector
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 
 
 
 class CrawlingSpider(CrawlSpider):
-    name = "mycrawler"
-    allowed_domains = ["autoscout24.be"]
+    name = "mycrawler_selenium"
     start_urls = ["https://www.autoscout24.be/fr/lst/audi?atype=C&cy=B&desc=0&sort=standard&source=homepage_search-mask&ustate=N%2CU"]
 
-    rules = (
-        Rule(LinkExtractor(restrict_css='a[title="Suivant"]'), follow=True),
-        Rule(LinkExtractor(restrict_css='a.Link_link__Ajn7I'), callback='parse_item', follow=True),
-)
-
+    def __init__(self):
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        self.driver = webdriver.Chrome(options=chrome_options)
 
     def parse_item(self, response):
         yield{
